@@ -15,15 +15,19 @@ model User {
   password   String
   isVerified Boolean @default(false)
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  resources Resource[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  resources     Resource[]
+  // relations
+  // otp            String?
+  // otpExpiry      DateTime?
+  // otpResendCount Int       @default(0)
+  // otpResendAt    DateTime?
+  notifications Notification[]
 
   // Requests: two relations to Request (borrower / owner) -> use relation names
   requestsMade     Request[] @relation("RequestsMade") // as borrower
   requestsReceived Request[] @relation("RequestsReceived") // as owner
-
-  //
 }
 
 model Resource {
@@ -58,10 +62,33 @@ model Request {
   status    RequestStatus @default(PENDING)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+
+  // optional: allow linking notifications to requests
+  notifications Notification[]
 }
 
 enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  message   String?
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  type      NotificationType
+  requestId String?
+  request   Request?         @relation(fields: [requestId], references: [id])
+}
+
+enum NotificationType {
+  REQUEST_RECEIVED
+  REQUEST_APPROVED
+  REQUEST_REJECTED
+  REQUEST_CREATED
 }
