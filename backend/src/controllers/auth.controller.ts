@@ -24,13 +24,20 @@ export const loginAuth = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await authService.loginUser({ email, password });
-    return res.status(200).json(
-      new ApiResponse({
-        message: 'User logged in successfully',
-        data: user,
-        status: 200,
-      }),
-    );
+    return res
+      .status(200)
+      .cookie('accessToken', user.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      })
+      .json(
+        new ApiResponse({
+          message: 'User logged in successfully',
+          data: user,
+          status: 200,
+        }),
+      );
   } catch (error) {
     throw error;
   }
