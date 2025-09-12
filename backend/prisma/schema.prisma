@@ -14,4 +14,23 @@ model User {
   // name           String?
   password   String
   isVerified Boolean @default(false)
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  resources Resource[]
+}
+
+model Resource {
+  id          String  @id @default(uuid())
+  title       String
+  category    String
+  description String?
+  image       String?
+  available   Boolean @default(true)
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
