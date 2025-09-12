@@ -18,6 +18,12 @@ model User {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   resources Resource[]
+
+  // Requests: two relations to Request (borrower / owner) -> use relation names
+  requestsMade     Request[] @relation("RequestsMade") // as borrower
+  requestsReceived Request[] @relation("RequestsReceived") // as owner
+
+  //
 }
 
 model Resource {
@@ -31,6 +37,31 @@ model Resource {
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
 
+  requests Request[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Request {
+  id String @id @default(uuid())
+
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+
+  borrowerId String
+  borrower   User   @relation("RequestsMade", fields: [borrowerId], references: [id])
+
+  ownerId String
+  owner   User   @relation("RequestsReceived", fields: [ownerId], references: [id])
+
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
