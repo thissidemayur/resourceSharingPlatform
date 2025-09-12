@@ -1,31 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { MessageCircle, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { useState } from "react";
+import { MessageCircle, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-import Link from 'next/link';
-import { MainLayout } from '@/app/components/layout/main-layout';
-import { mockChats } from '@/lib/mockData';
-import { ChatListItem } from '@/app/components/chat/chatlistItem';
+import Link from "next/link";
+import { MainLayout } from "@/app/components/layout/main-layout";
+import { mockChats } from "@/lib/mockData";
+import { ChatListItem } from "@/app/components/chat/chatlistItem";
 
 // Mock chat data
 
 export default function ChatPage() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredChats = mockChats.filter(
-    (chat) =>
-      chat.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.resource.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredChats = mockChats.filter((chat) => {
+    const userName = chat.user?.name || "";
+    const resourceTitle = chat.resource || "";
+    return (
+      userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resourceTitle.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   const totalUnread = mockChats.reduce(
     (sum, chat) => sum + chat.unreadCount,
-    0,
+    0
   );
 
   return (
@@ -69,8 +72,8 @@ export default function ChatPage() {
                   <h3 className="font-medium mb-2">No conversations found</h3>
                   <p className="text-sm text-muted-foreground text-center">
                     {searchQuery
-                      ? 'Try a different search term'
-                      : 'Start a conversation by requesting a resource'}
+                      ? "Try a different search term"
+                      : "Start a conversation by requesting a resource"}
                   </p>
                 </CardContent>
               </Card>
