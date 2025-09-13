@@ -6,13 +6,32 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 
 //add new resource
 export const createResource = asyncHandler(async (req, res) => {
-  const { title, category, image, description } = req.body;
+  const {
+    title,
+    category,
+    image,
+    description,
+    condition,
+    borrowingPeriod,
+    pickupLocation,
+    specialInstruction,
+    securityDeposit,
+    included,
+    available,
+  } = req.body;
   console.log('req.authUser?.id!', req.authUser?.id!);
   const resource = await resourceService.create(req.authUser?.id!, {
     title,
     category,
     image,
     description,
+    condition,
+    borrowingPeriod,
+    pickupLocation,
+    specialInstruction,
+    securityDeposit,
+    included,
+    available,
   });
 
   return res.status(201).json(

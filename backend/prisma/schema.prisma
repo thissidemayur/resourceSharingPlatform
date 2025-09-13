@@ -31,20 +31,33 @@ model User {
 }
 
 model Resource {
-  id          String  @id @default(uuid())
-  title       String
-  category    String
-  description String?
-  image       String?
-  available   Boolean @default(true)
+  id                 String    @id @default(uuid())
+  title              String
+  category           String
+  description        String
+  condition          Condition
+  image              String?
+  included           String[]  @default([])
+  borrowingPeriod    Int // in days
+  available          Boolean   @default(true)
+  pickupLocation     String
+  specialInstruction String?
+  securityDeposit    String?
+  ownerId            String
 
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
+  owner User @relation(fields: [ownerId], references: [id])
 
   requests Request[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Condition {
+  Like_New
+  Good
+  Fair
+  Need_Repair
 }
 
 model Request {

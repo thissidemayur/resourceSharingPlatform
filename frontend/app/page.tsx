@@ -1,14 +1,14 @@
-import Link from "next/link";
-import { ArrowRight, Users, Shield, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { ArrowRight, Users, Shield, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { MainLayout } from "@/app/components/layout/main-layout";
+} from '@/components/ui/card';
+import { MainLayout } from '@/app/components/layout/main-layout';
 
 export default function HomePage() {
   return (
@@ -16,7 +16,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="text-center py-12 md:py-20">
         <h1 className="text-4xl md:text-6xl font-bold text-balance mb-6">
-          Share Resources with Your{" "}
+          Share Resources with Your{' '}
           <span className="text-primary">Community</span>
         </h1>
         <p className="text-xl text-muted-foreground text-balance mb-8 max-w-2xl mx-auto">

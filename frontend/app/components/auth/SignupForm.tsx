@@ -1,15 +1,52 @@
+'use client';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-
+import { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
+      console.log(res);
+      if (res.statusText === 'OK') {
+        toast.success(res.data.message);
+        router.push('/auth/login');
+      }
+      res.headers['content-Type'] = 'application/json';
+    } catch (error: any) {
+      console.log(error);
+      if (error.response?.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Unexpected Error, Please try again later');
+      }
+    }
+  };
   return (
-    <form className={cn('flex flex-col gap-6', className)} {...props}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn('flex flex-col gap-6', className)}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Signup to Mayurology</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -19,13 +56,26 @@ export function SignupForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input id="password" type="password" required />
+          <Input
+            id="password"
+            type="password"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+          />
         </div>
         <Button type="submit" className="w-full">
           Signup

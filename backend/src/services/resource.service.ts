@@ -5,7 +5,14 @@ interface iRegisterResourceProps {
   title: string;
   category: string;
   image: string;
-  description?: string;
+  description: string;
+  condition: string;
+  borrowingPeriod: number;
+  pickupLocation: string;
+  specialInstruction?: string;
+  securityDeposit?: string;
+  included?: string[];
+  available: boolean;
 }
 
 interface iUpdateResourceProps {
@@ -19,12 +26,39 @@ interface iDeleteResourceProps {
 }
 
 // create resource bussiness logic
-const create = async (
-  ownerId: string,
-  { title, category, image, description }: iRegisterResourceProps,
-) => {
+const create = async (ownerId: string, props: iRegisterResourceProps) => {
+  const {
+    title,
+    category,
+    image,
+    description,
+    condition,
+    borrowingPeriod,
+    pickupLocation,
+    specialInstruction,
+    securityDeposit,
+    included,
+  } = props;
+  const conditionEnum = condition.replace(' ', '_') as
+    | 'Like_New'
+    | 'Good'
+    | 'Fair'
+    | 'Need_Repair';
+
   return await prisma.resource.create({
-    data: { title, category, image, description, ownerId },
+    data: {
+      title,
+      category,
+      image,
+      description,
+      condition: conditionEnum,
+      borrowingPeriod: Number(borrowingPeriod),
+      pickupLocation,
+      specialInstruction,
+      securityDeposit,
+      included: included || [], // ensure array
+      ownerId,
+    },
   });
 };
 
@@ -80,9 +114,38 @@ const updateResource = async ({
       message: 'You are not authorized to update this resource',
       status: 403,
     });
+  const {
+    title,
+    category,
+    image,
+    description,
+    condition,
+    borrowingPeriod,
+    pickupLocation,
+    specialInstruction,
+    securityDeposit,
+    included,
+  } = data;
+  const conditionEnum = condition?.replace(' ', '_') as
+    | 'Like_New'
+    | 'Good'
+    | 'Fair'
+    | 'Need_Repair';
   return await prisma.resource.updateMany({
     where: { id: resourceId, ownerId },
-    data,
+    data: {
+      title,
+      category,
+      image,
+      description,
+      condition: conditionEnum, // ✅ now recognized
+      borrowingPeriod: Number(borrowingPeriod),
+      pickupLocation,
+      specialInstruction,
+      securityDeposit,
+      included: included || [],
+      ownerId,
+    },
   });
 };
 
